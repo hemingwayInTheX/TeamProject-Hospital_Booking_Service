@@ -1,41 +1,12 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <fstream>
 #include <vector>
+
 using namespace std;
 
 #ifndef __HOSPITAL__H
-#define __HOSPITAL__h
-
-/*===Department 클래스===
->> 예약, 취소, 변경 핵심 기능 정의
->> 각 부서에 맞게 의사에 대한 객체 생성*/
-class Test {
-public:
-	Test() { dept = ""; }
-	void setName(string name) { dept = name; }
-	string getName() { return dept; }
-	void display() { cout << dept << endl; }
-private:
-	string dept;
-};
-/*===Hospital 클래스===
- >> 프로그램 실행 및 활성화 메서드 정의
- >> 진료부서에 대한 객체 배열 초기화 및 벡터 저장*/
-class Hospital {
-public:
-	/*Constructor & Destructor*/
-	Hospital();
-	~Hospital() { delete[]test; }
-	/*Function*/
-	void execute_prog();//프로그램 시작
-	void activation_prog(int selection);//기능 활성화
-private:
-	Test* test;
-	vector <Test>vec_storage_Dept;//초기화된 부서객체를 벡터에 저장
-	int selectMenu;//메뉴 입력 반환값 저장
-	int selectDept;//부서 선택 입력 반환값 저장
-};
+#define __HOPITAL__H
 /*===Console 클래스====
   >> 사용자 입력값을 받고 반환하는 메서드 정의 --> static 선언*/
 class Console {
@@ -45,5 +16,33 @@ public:
 	static int select_method();//예약 방식 선택
 };
 
-#endif // !__HOSPITAL__H
+class Department {
+public:
+	/*Constructor*/
+	Department(int selectDept);//선택한 부서에 대한 입력값을 기반으로 객체 초기화
+	/*Function*/
+	string extract_line(string str);//파일에서 읽은 텍스트의 일부만 추출해 반환
+	void show_select_dept() { cout << deptName << "해당부서를 선택하셨습니다.\n"; }//선택한 부서에 대한 초기화 결과 출력(TEST)
+private:
+	string deptName;//진료부서 이름 정보 저장
+};
 
+class Doctor :public Department {
+public:
+	/*Constructor*/
+	Doctor(int param) :Department(param) {};//멤버 이니셜라이져를 활용해 base클래스 생성자 호출
+};
+/*===Hospital 클래스===
+ >> 프로그램 실행 및 활성화 메서드 정의
+ >> 진료부서에 대한 객체 동적 할당*/
+class Hospital {
+public:
+	/*Function*/
+	void execute_prog();//전체 프로그램 제어 및 실행
+	void activation_reserv(int param);//예약 활성화(예약 기능 준비단계)
+private:
+	Doctor* dc;
+	int selectMenu;
+	int selectDept;
+};
+#endif // !__HOSPITAL__H

@@ -1,0 +1,9 @@
+1. FamilyMedicine
+2. InternalMedicine
+3. PlasticSurgery
+4. Dentistry
+5. OrthopedicSurgery
+6. Ophthalmology
+7. Psychiatry
+8. Dermatology
+9. EmergencyService

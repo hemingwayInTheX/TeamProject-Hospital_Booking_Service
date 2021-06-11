@@ -1,7 +1,8 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <fstream>
 #include <vector>
+
 using namespace std;
 
 #include "hospital.h"
@@ -44,40 +45,49 @@ int Console::select_dept() {//부서 선택
 	return inputDept;
 }
 
-/*===Hospital 클래스 구현부===*/
-Hospital::Hospital() {
-	test = new Test[25];//25개의 진료부서 저장
+/*=====Department 클래스 구현부=====*/
+Department::Department(int selectDept) {
 	ifstream read_file;
-	string readLine;//텍스트 파일에서 한 줄씩 읽은 데이터 저장
-	string deptName;
-	int idx = 0;
+	string readLine;//텍스트파일에서 읽은 한줄의 텍스트 저장
+	string subStr;//부분 문자열 저장
+	int chkIdx = 0;
 
 	read_file.exceptions(ifstream::failbit | ifstream::badbit);//예외처리
-	read_file.open("hospital.txt");//텍스트파일 불러오기
+	read_file.open("depart.txt");//텍스트파일 불러오기
 
-	while (!read_file.eof()) {//파일 끝을 만날때까지 작업 수행
-		if (read_file.eof())break;//파일의 끝인지 중복체크
+	while (!read_file.eof()) {//파일 끝 만나면 루프 종료
 		getline(read_file, readLine);
-		deptName = readLine;
-		test[idx].setName(deptName);// 1) 객체 배열 초기화
-		vec_storage_Dept.push_back(test[idx]);// 2) 초기화된 객체를 벡터에 순서대로 저장
-		idx++;
-	}
-}
+		chkIdx = readLine[0] - '0';// 한 줄의 첫 번째 인덱스 번호를 정수형으로 변환
 
-void Hospital::execute_prog() {
-	int idx = 0;
-	selectMenu = Console::select_menu();
-	if (selectMenu == 1) {//메뉴 입력
-		selectDept = Console::select_dept();//진료 부서 선택
-		activation_prog(selectDept);
-		cout << "hello";
-	}
-}
-
-void Hospital::activation_prog(int selection) {
-		for (int i = 0; i < 3; i++) {//전체 진료 부서 출력
-			vec_storage_Dept[i].display();
+		if (chkIdx == selectDept) {
+			subStr = extract_line(readLine);
+			deptName = subStr;
+			break;
 		}
+	}
+}
 
+string Department::extract_line(string str) {
+	string result;
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == ' ') {
+			result = str.substr(i + 1);
+		}
+	}
+	return result;
+}
+
+/*=====Hospital 클래스 구현부=====*/
+void Hospital::execute_prog() {
+	selectMenu = Console::select_menu();//메뉴 입력(1. 예약, 2.조회, 3.취소, 4.종료)
+	switch (selectMenu){
+	case 1: 
+		selectDept = Console::select_dept();//부서 입력(1~9)
+		activation_reserv(selectDept);//예약 활성화
+		break;
+	}
+}
+void Hospital::activation_reserv(int param) {
+	dc = new Doctor(param);
+	dc->show_select_dept();
 }

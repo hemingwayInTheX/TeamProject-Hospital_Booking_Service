@@ -1,10 +1,12 @@
+#include <Windows.h>
 #include <iostream>
 using namespace std;
 
 #include "hospital.h"
 
 int main() {
-	cout << "****STRAT SYSTEM****\n";
+	Console::gotoxy(28, 3);
+	cout << "****WELCOME TO SEVERANCE-HEALTHCARE!!!****\n";
 	Hospital* client = new Hospital();
 	client->execute_prog();
 

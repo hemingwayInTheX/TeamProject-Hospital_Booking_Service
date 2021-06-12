@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
 	Console::gotoxy(28, 3);
-	cout << "****WELCOME TO SEVERANCE-HEALTHCARE!!!****\n";
+	cout << "�ڡڡڡڡ� WELCOME TO SEVERANCE-HEALTHCARE!!! �ڡڡڡڡ�\n";
 	Hospital* client = new Hospital();
 	client->execute_prog();
 

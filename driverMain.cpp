@@ -4,12 +4,12 @@ using namespace std;
 
 #include "hospital.h"
 
-int main() {
+int main(void) {
 	Console::gotoxy(28, 3);
-	cout << "�ڡڡڡڡ� WELCOME TO SEVERANCE-HEALTHCARE!!! �ڡڡڡڡ�\n";
-	Hospital* client = new Hospital();
+	cout << " WELCOME TO SEVERANCE-HEALTHCARE\n";
+	
+	Console* client = new Console();
 	client->execute_prog();
-
 	system("pause");
 	return 0;
 }

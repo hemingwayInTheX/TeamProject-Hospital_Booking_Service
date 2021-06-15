@@ -1,4 +1,4 @@
-#include <Windows.h>
+ï»¿#include <Windows.h>
 #include <conio.h>
 #include <iostream>
 #include <fstream>
@@ -9,18 +9,18 @@ using namespace std;
 
 #include "hospital.h"
 
-/*======Doctor Å¬·¡½º ±¸ÇöºÎ======*/
+/*======Doctor í´ë˜ìŠ¤ êµ¬í˜„ë¶€======*/
 
-/* doctor »ı¼ºÀÚ : ÀÇ»ç ÀÌ¸§°ú Áø·á ½ºÄÉÁÙ 2Â÷¿ø ¹è¿­ »ı¼º
-  ±âº» °ª : ÀÌ¸§="NULL", ½ºÄÉÁÙ : 0Çà-¿äÀÏ 0¿­-Å¸ÀÓ */
+/* doctor ìƒì„±ì : ì˜ì‚¬ ì´ë¦„ê³¼ ì§„ë£Œ ìŠ¤ì¼€ì¤„ 2ì°¨ì› ë°°ì—´ ìƒì„±
+  ê¸°ë³¸ ê°’ : ì´ë¦„="NULL", ìŠ¤ì¼€ì¤„ : 0í–‰-ìš”ì¼ 0ì—´-íƒ€ì„ */
 Doctor::Doctor() {
 	dcName = "NULL";
 	schedule[0][0] = "~~~";
-	schedule[0][1] = "¿ù";
-	schedule[0][2] = "È­";
-	schedule[0][3] = "¼ö";
-	schedule[0][4] = "¸ñ";
-	schedule[0][5] = "±İ";
+	schedule[0][1] = "ì›”";
+	schedule[0][2] = "í™”";
+	schedule[0][3] = "ìˆ˜";
+	schedule[0][4] = "ëª©";
+	schedule[0][5] = "ê¸ˆ";
 
 	for (int i = 1; i < 6; i++) {
 		schedule[i][0] = to_string(i) + "time";
@@ -38,35 +38,27 @@ string Doctor::getSchedule(string s) {
 	for (int i = 1; i < DAY; i++){
 		for (int j = 1; j < DATE; j++){
 			if (schedule[i][j] == s) {
-				temp = j;
-				if (i == 1)str = "mon";
-				else if (i == 2)str = "tue";
-				else if (i == 3)str = "wed";
-				else if (i == 4)str = "thu";
-				else if (i == 5)str = "fri";
+				temp = i;
+				if (j == 1)str = "mon";
+				else if (j == 2)str = "tue";
+				else if (j == 3)str = "wed";
+				else if (j == 4)str = "thu";
+				else if (j == 5)str = "fri";
 			}
 		}
 	}
-	str = str + '-' + to_string(temp);
+	str = str + '-' + to_string(temp)+"time";
 	return str;
 }
-
+/*ì§„ë£Œ ìŠ¤ì¼€ì¤„ ì´ˆê¸°í™” --> íœ´ì§„ 'x'reading ì‹œ ì˜ˆì™¸ì²˜ë¦¬*/
 void Doctor::setSchedule(string s, int i, int j) {
 	if (schedule[i][j] == "xxxxxxxxxxxxx") {
-		cout << "ÈŞÁøÀÔ´Ï´Ù~!\n";
+		cout << "íœ´ì§„ì…ë‹ˆë‹¤~!\n";
 		return;
 	}
 	schedule[i][j] = s;
-	/*try {
-		schedule[i][j] = s;
-		if (schedule[i][j] == "xxxxxxxxxxxxx") {
-			throw 
-		}
-	}
-	catch () {
-
-	}*/
 }
+/*ìŠ¤ì¼€ì¤„ ì¶œë ¥*/
 void Doctor::display_Schedule() {
 	for (int i = 0; i < 6; i++) {
 		for (int j = 0; j < 6; j++) {
@@ -75,7 +67,7 @@ void Doctor::display_Schedule() {
 		cout << endl;
 	}
 }
-
+/*ì˜ˆì•½ ì·¨ì†Œ ì‹œ "-" ê°±ì‹ */
 void Doctor::cancel_sche(string s) {
 	string str;
 	int temp = 0;
@@ -87,8 +79,27 @@ void Doctor::cancel_sche(string s) {
 		}
 	}
 }
-/*======Department Å¬·¡½º ±¸ÇöºÎ======*/
+void Doctor::display_Schedule_dayver(int num) {
+	for (int i = 0; i < 6; i++) {
+		cout << schedule[i][0] << "\t";
+		cout << schedule[i][num] << endl;
+	}
+	cout << endl;
+}
 
+bool Doctor::search_Schedule(int num) {
+	if (schedule[1][num] != "xxxxxxxxxxxxx") {
+		return true;
+	}
+	return false;
+}
+/*======Department í´ë˜ìŠ¤ êµ¬í˜„ë¶€======
+ì§„ë£Œë¶€ì„œì— ëŒ€í•œ ì´ˆê¸°í™” ì‘ì—… í›„ ë°”ë¡œ ê° ë¶€ì„œì˜ 
+ì˜ë£Œì§„ ë° ëª¨ë“  ì˜ì‚¬ ìŠ¤ì¼€ì¤„ì— ëŒ€í•œ ì´ˆê¸°í™” ì‘ì—… ìˆ˜í–‰
+--> 1) í…ìŠ¤íŠ¸íŒŒì¼ì—ì„œ ì˜ì‚¬ ì´ë¦„ì„ íƒìƒ‰ ì‹œ ê°ì²´ ì´ˆê¸°í™” ì‘ì—… ì´í›„ ë²¡í„° ì €ì¥
+--> 2) ì˜ì‚¬ ì´ë¦„ì´ ì•„ë‹Œ ìŠ¤ì¼€ì¤„ ë„ê°’('-')íƒìƒ‰ ì‹œ ë”°ë¡œ ì •ì˜í•œ ì¶”ì¶œ ë©”ì„œë“œë¥¼ 
+í†µí•´ '-'5ê°œ ì¶”ì¶œ í›„ ë²¡í„° ì €ì¥ ë° ë°˜í™˜ = ìŠ¤ì¼€ì¤„ Matrix(5X5) ì´ˆê¸°í™” 
+        --> 0í–‰ 0ì—´ì€ ìš”ì¼ ë° ì‹œê°„ëŒ€ë¡œ ì‚¬ì „ ì´ˆê¸°í™”*/
 void Department::loadDcList(string filename) {
 	string getFile = filename;
 	string str;
@@ -97,14 +108,14 @@ void Department::loadDcList(string filename) {
 
 	read_file.open(filename);
 	if (!read_file) {
-		cout << "½Ã½ºÅÛ »ó¿¡ ¿À·ù°¡ ÀÖ½À´Ï´Ù.\n";
+		cout << "ì‹œìŠ¤í…œ ìƒì— ì˜¤ë¥˜ê°€ ìˆìŠµë‹ˆë‹¤.\n";
 		exit(100);
 	}
-	int count = 0;   //ÆÄÀÏ ÁÙ¼¼±â
-	int i = 0;      //º¤ÅÍ °´Ã¼ ¼ø¼­ ÀúÀå
-	int s = 1; //DAY °è»ê 
+	int count = 0;   //íŒŒì¼ ì¤„ì„¸ê¸°
+	int i = 0;      //ë²¡í„° ê°ì²´ ìˆœì„œ ì €ì¥
+	int s = 1; //DAY ê³„ì‚° 
 	while (getline(read_file, str)) {
-		//ÀÇ»ç ÀÌ¸§ Á¢±Ù : ´ÚÅÍ°´Ã¼ »ı¼ºÇÏ¿© º¤ÅÍ ÀúÀå ¹× ÀÇ»ç ÀÌ¸§ ÀúÀå
+		//ì˜ì‚¬ ì´ë¦„ ì ‘ê·¼ : ë‹¥í„°ê°ì²´ ìƒì„±í•˜ì—¬ ë²¡í„° ì €ì¥ ë° ì˜ì‚¬ ì´ë¦„ ì €ì¥
 		if (count % 7 == 1) {
 			doctor = new Doctor;
 			doctor->setDc(str);
@@ -112,8 +123,8 @@ void Department::loadDcList(string filename) {
 			i++;
 		}
 		else {
-			//Áø·á ½ºÄÉÁÙÁ¢±Ù : Áø·á ½ºÄÉÁÙ ¹Ş¾Æ¿À±â
-			//v º¤ÅÍ = ÀÇ»ç°´Ã¼ ÀúÀå -> pop -> tempº¤ÅÍ -> (storage) string tokenizing --> °¢ ¿ø¼Ò ÇÒ´ç
+			//ì§„ë£Œ ìŠ¤ì¼€ì¤„ì ‘ê·¼ : ì§„ë£Œ ìŠ¤ì¼€ì¤„ ë°›ì•„ì˜¤ê¸°
+			//v ë²¡í„° = ì˜ì‚¬ê°ì²´ ì €ì¥ -> pop -> tempë²¡í„° -> (storage) string tokenizing --> ê° ì›ì†Œ í• ë‹¹
 			if (str != "-----") {
 				int j = 0;
 				doc = v.at(i - 1);
@@ -139,8 +150,8 @@ vector<string> Department::tokenizing_sc(const string str) {
 	string sc;
 	int chkSpace = 0;
 	int idx = 0;
-	for (int i = 0; i < str.size(); i++) {//ÀĞÀº ¹®ÀÚ¿­ÀÇ ±æÀÌ¸¸Å­ ·çÇÁ ¼öÇà
-		if (str[i] == ' ') {//°ø¹é ¹®ÀÚ ¸¸³ª¸é ±× ÀÌÀü ¹®ÀÚ¿¡ ´ëÇÑ ÅäÅ©³ªÀÌÂ¡ ¼öÇà ¹× ÇØ´ç µ¥ÀÌÅÍ ¹İÈ¯
+	for (int i = 0; i < str.size(); i++) {//ì½ì€ ë¬¸ìì—´ì˜ ê¸¸ì´ë§Œí¼ ë£¨í”„ ìˆ˜í–‰
+		if (str[i] == ' ') {//ê³µë°± ë¬¸ì ë§Œë‚˜ë©´ ê·¸ ì´ì „ ë¬¸ìì— ëŒ€í•œ í† í¬ë‚˜ì´ì§• ìˆ˜í–‰ ë° í•´ë‹¹ ë°ì´í„° ë°˜í™˜
 			sc = str.substr(idx, i - idx);
 			idx = i + 1;
 			result.push_back(sc);
@@ -153,16 +164,17 @@ vector<string> Department::tokenizing_sc(const string str) {
 
 int Department::inputDc() {
 	int input;
-    cout << "¡Ø Please select the Doctor you want~!\n";
-	cout << ">>";
+	Console::gotoxy(34, 18); cout << "â€» Please select the Doctor you want~!\n";
+	Console::gotoxy(34, 19); cout << ">>";
 	cin >> input;
-	
+	system("cls");//ì…ë ¥ í›„ ì…ë ¥ë°›ì€ í™”ë©´ ì§€ì›€ -->APIì ìš©
+
 	return input;
 }
 int Department::inputDay() {
 	string input;
 	int result = 0;
-	cout << "¡Ø Please select schedule~!\n";
+	cout << "â€» Please select Day~!\n";
 	cout << ">>";
 	cin >> input;
 	
@@ -174,63 +186,113 @@ int Department::inputDay() {
 	
 	return result;
 }
+/*ì‹œê°„ëŒ€ ì…ë ¥*/
 int Department::inputTime() {
 	int inputDept = 0;
 	try {
-		cout << "¡Ø Please select the Medical Department you want~!\n";
+		cout << "â€» Please select the Time~!\n";
 		cout << ">>";
 		cin >> inputDept;
-		cin.ignore(INT_MAX, '\n');//¹öÆÛºñ¿ì±â
+		cin.ignore(INT_MAX, '\n');//ë²„í¼ë¹„ìš°ê¸°
 
 		if (inputDept > 5) {
 			throw inputDept;
 		}
 	}
 	catch (int x) {
-		cout << "WARNING! Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù!! ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä~!\n";
+		cout << "WARNING! ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤!! ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”~!\n";
 		cin >> inputDept;
 	}
 	return inputDept;
 }
+/*ì‚¬ìš©ì ì •ë³´ ì…ë ¥*/
 string Department::inputInfo() {
 	string inputName;
 	string inputId;
 	string result;
 
-	cout << "¡Ø Please input NAME~!\n";
+	cout << "â€» Please input NAME~!\n";
 	cout << ">>";
 	cin >> inputName;
 
-	cout << "¡Ø Please input ID~!\n";
+	cout << "â€» Please input ID~!\n";
 	cout << ">>";
 	cin >> inputId;
 
 	result = inputName + '-'+inputId;
 	return result;
 }
+int Department::reinputDc(int num) {
+	int input;
+	while (1) {
+		input = inputDc();
+		if (!v[input - 1]->search_Schedule(num))
+			cout << "ê³ ìœ ë²ˆí˜¸ì— í•´ë‹¹í•˜ëŠ” ì˜ì‚¬ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”" << endl;
+		else
+			break;
+	}
+	return input;
+}
+/*ì˜ë£Œì§„ ëª©ë¡ ì¶œë ¥*/
 void Department::display_dcList() {
 	for (int i = 0; i < v.size(); i++){
-		cout << v[i]->getDc() << endl;
+		Console::gotoxy(46, (i * 2) + 10);
+		cout <<"("<<i+1<<")"<< v[i]->getDc() << endl;
 	}
 }
-void Department::set_reservation() {//point!
-	display_dcList();//Ãâ·Â
+/*  í•µì‹¬ ê¸°ëŠ¥ ì‹¤í–‰
+  --> ì˜ˆì•½ì— ìˆì–´ í•„ìš”í•œ ë‚ ì§œ, ì‹œê°„ëŒ€ë¥¼ ì…ë ¥ë°›ê³ 
+  ìµœì¢…ì ìœ¼ë¡œ ì‚¬ìš©ì ì •ë³´ë¥¼ ì…ë ¥í•¨ìœ¼ë¡œì¨ ì˜ˆì•½ ì™„ë£Œ*/
+void Department::set_reservation() {
+	display_dcList();//ì¶œë ¥
 	int day;
 	int time;
 	string client;
 
-	int inputDoc = inputDc();//ÀÇ»çÀÔ·Â
-	v[inputDoc - 1]->display_Schedule();//ÀÇ»çÃâ·Â
+	int inputDoc = inputDc();// 1) ì˜ì‚¬ì…ë ¥
+	v[inputDoc - 1]->display_Schedule();//ì˜ì‚¬ì¶œë ¥
 
-	day = inputDay();
+	day = inputDay();// 2) ë‚ ì§œ ì…ë ¥ --> Ex) input >> mon, tue, wed
+	time = inputTime();// 3) ì‹œê°„ ì…ë ¥ 
+	client = inputInfo();// 4) ì‚¬ìš©ì ì •ë³´ ì…ë ¥
+
+	v[inputDoc - 1]->setSchedule(client,time,day);
+	v[inputDoc - 1]->display_Schedule();//ì„ íƒí•œ ì˜ì‚¬ ìŠ¤ì¼€ì¤„ ë° í™•ì •ëœ ì˜ˆì•½ ë‚´ì—­ì¶œë ¥
+	Console::gotoxy(35, 24);
+	cout << v[inputDoc - 1]->getSchedule(client) << "(ìš”ì¼/ì‹œê°„ëŒ€)ë¥¼ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤!\n";
+	Sleep(6000);//ì ê¹ ë©ˆì¶”ê³  ë‹¤ìŒ í™”ë©´ìœ¼ë¡œ ì „í™˜
+	system("cls");//ì…ë ¥ í›„ ì…ë ¥ë°›ì€ í™”ë©´ ì§€ì›€ -->APIì ìš©
+}
+void Department::set_reservation_sc() {
+	cout << "â€» Please select day~!\n";
+	cout << " mon\ttue\twed\tthu\tfri\n";
+
+	int input;
+	int inputDoc;
+	int time;
+	string client;
+
+	input = inputDay();
+
+	for (int i = 0; i < v.size(); i++) {
+		if (v[i]->search_Schedule(input)) {
+			cout << "(" << i + 1 << "). " << v[i]->getDc() << endl;
+			v[i]->display_Schedule_dayver(input);
+		}
+	}
+
+	inputDoc = reinputDc(input);
 	time = inputTime();
 	client = inputInfo();
 
-	v[inputDoc - 1]->setSchedule(client,time,day);//ÀÇ»çÃâ·Â
-	v[inputDoc - 1]->display_Schedule();//ÀÇ»çÃâ·Â
-	system("cls");//ÀÔ·Â ÈÄ ÀÔ·Â¹ŞÀº È­¸é Áö¿ò -->APIÀû¿ë
+	v[inputDoc - 1]->setSchedule(client, time, input);//ì‚¬ìš©ì ì…ë ¥
+	v[inputDoc - 1]->display_Schedule();//ì¶œë ¥
+	Sleep(6000);//ì ê¹ ë©ˆì¶”ê³  ë‹¤ìŒ í™”ë©´ìœ¼ë¡œ ì „í™˜
+	system("cls");//ì…ë ¥ í›„ ì…ë ¥ë°›ì€ í™”ë©´ ì§€ì›€ -->APIì ìš©
 }
-
+/* ì˜ì‚¬ ê°ì²´ì˜ ìŠ¤ì¼€ì¤„ì— ì €ì¥ëœ ì‚¬ìš©ì ì •ë³´ë¥¼ 
+    ë°˜í™˜ë°›ì•„ nullê°’ì„ ë‚˜íƒ€ë‚´ëŠ” '-' ê³¼ ë¹„êµì—°ì‚°
+	ìˆ˜í–‰ í›„ ì‚¬ìš©ìê°€ ì…ë ¥í•œ ì˜ˆì•½ì •ë³´ ì¶œë ¥*/
 void Department::chk_reservation() {
 	string client = inputInfo();
 	string s;
@@ -238,6 +300,8 @@ void Department::chk_reservation() {
 		s = v[i]->getSchedule(client);
 		if (s[0] != '-') {
 			cout << s;
+			Sleep(6000);//ì ê¹ ë©ˆì¶”ê³  ë‹¤ìŒ í™”ë©´ìœ¼ë¡œ ì „í™˜
+			system("cls");//ì…ë ¥ í›„ ì…ë ¥ë°›ì€ í™”ë©´ ì§€ì›€ -->APIì ìš©
 			break;
 		}
 	}
@@ -250,13 +314,13 @@ void Department::cancel_reservation() {
 		v[i]->cancel_sche(client);
 	}
 }
-/*======Hospital Å¬·¡½º ±¸ÇöºÎ======*/
+/*======Hospital í´ë˜ìŠ¤ êµ¬í˜„ë¶€======*/
 
-/*9°³ÀÇ Áø·áºÎ¼­¿¡ ´ëÇÑ °´Ã¼ ¹è¿­ µ¿Àû »ı¼º.
-	ºÎ¼­¸íÀ» ÃßÃâÇÑ ÈÄ °¢°¢ ÇØ´çµÇ´Â °´Ã¼ ÃÊ±âÈ­.
-	---> ºÎ¼­¸í txtÆÄÀÏ(depart.txt)¿¡¼­ ¸ğµç ºÎ¼­¸¦ ÀĞ¾î
-	ÀüÃ¼ °´Ã¼¿¡ ´ëÇÑ ÃÊ±âÈ­ ÀÛ¾÷
-	---> º´¿ø ³» ÀüÃ¼ Áø·áºÎ¼­¿¡ ´ëÇÑ Ãâ·ÂÀ» À§ÇØ º¤ÅÍ ÀÚ·á±¸Á¶ È°¿ë*/
+/*9ê°œì˜ ì§„ë£Œë¶€ì„œì— ëŒ€í•œ ê°ì²´ ë°°ì—´ ë™ì  ìƒì„±.
+	ë¶€ì„œëª…ì„ ì¶”ì¶œí•œ í›„ ê°ê° í•´ë‹¹ë˜ëŠ” ê°ì²´ ì´ˆê¸°í™”.
+	---> ë¶€ì„œëª… txtíŒŒì¼(depart.txt)ì—ì„œ ëª¨ë“  ë¶€ì„œë¥¼ ì½ì–´
+	ì „ì²´ ê°ì²´ì— ëŒ€í•œ ì´ˆê¸°í™” ì‘ì—…
+	---> ë³‘ì› ë‚´ ì „ì²´ ì§„ë£Œë¶€ì„œì— ëŒ€í•œ ì¶œë ¥ì„ ìœ„í•´ ë²¡í„° ìë£Œêµ¬ì¡° í™œìš©*/
 Hospital::Hospital() {
 	ifstream read_file;
 	string readLine;
@@ -267,7 +331,7 @@ Hospital::Hospital() {
 
 	read_file.open("depart.txt");
 	if (!read_file) {
-		cout << "½Ã½ºÅÛ »ó¿¡ ¿À·ù°¡ ÀÖ½À´Ï´Ù.\n";
+		cout << "ì‹œìŠ¤í…œ ìƒì— ì˜¤ë¥˜ê°€ ìˆìŠµë‹ˆë‹¤.\n";
 		exit(100);
 	}
 	while (!read_file.eof()) {
@@ -286,9 +350,9 @@ Hospital::Hospital() {
 	}
 	read_file.close();
 }
-/*ÀĞÀº ¹®ÀÚ¿­ÀÇ ±æÀÌ¸¸Å­ ·çÇÁ ¼öÇà,
-	°ø¹é ¹®ÀÚ ¸¸³ª¸é ±× ÀÌÈÄ ¹®ÀÚ¿­(Áø·áºÎ¼­ ¸í)À» ÃßÃâÇØ ¹İÈ¯.
-	---> string Çì´õÆÄÀÏÀÇ substr¶óÀÌºê·¯¸® È°¿ë */
+/*ì½ì€ ë¬¸ìì—´ì˜ ê¸¸ì´ë§Œí¼ ë£¨í”„ ìˆ˜í–‰,
+	ê³µë°± ë¬¸ì ë§Œë‚˜ë©´ ê·¸ ì´í›„ ë¬¸ìì—´(ì§„ë£Œë¶€ì„œ ëª…)ì„ ì¶”ì¶œí•´ ë°˜í™˜.
+	---> string í—¤ë”íŒŒì¼ì˜ substrë¼ì´ë¸ŒëŸ¬ë¦¬ í™œìš© */
 string Hospital::tokenizing_dept(string const& str) {
 	string result;
 	int j = 0;
@@ -302,6 +366,8 @@ string Hospital::tokenizing_dept(string const& str) {
 	}
 	return result;
 }
+/*'=' ê¸°ì¤€ í…ìŠ¤íŠ¸ íŒŒì¼ëª… ì¶”ì¶œ ì‘ì—… ìˆ˜í–‰
+   ---> = ì´í›„ ë¬¸ìì—´ ì¶”ì¶œí•´ ë°˜í™˜ */
 string Hospital::tokenizing_file(string const& str) {
 	string result;
 	int cnt = 0;
@@ -315,24 +381,28 @@ string Hospital::tokenizing_file(string const& str) {
 	}
 	return result;
 }
+/*í•µì‹¬ ê¸°ëŠ¥ í™œì„±í™”*/
 void Hospital::activation_booking(int num) {
+	string a = dept[num - 1].getDept();
+	Console::gotoxy(32, 8); cout <<"â—â—"<< a << "ì§„ë£Œë¶€ì„œë¥¼ ì„ íƒí•˜ì…¨ìŠµë‹ˆë‹¤~!â—â—\n";
 	dept[num - 1].set_reservation();
 }
-void Hospital::activation_chk(int num) {
-	dept[num - 1].chk_reservation();
+void Hospital::activation_booking2(int num) {
+	dept[num - 1].set_reservation_sc();
 }
-void Hospital::activation_cancel(int num) {
-	dept[num - 1].cancel_reservation();
-}
-/*º´¿ø ³» ÀüÃ¼ Áø·áºÎ¼­ Ãâ·Â*/
+void Hospital::activation_chk(int num) {dept[num - 1].chk_reservation();}
+void Hospital::activation_cancel(int num) {dept[num - 1].cancel_reservation();}
+/*ë³‘ì› ë‚´ ì „ì²´ ì§„ë£Œë¶€ì„œ ì¶œë ¥*/
 void Hospital::display_deptList() {
+	Console::gotoxy(34,2); cout << " â™£â™£â™£â™£â™£â™£SEVERANCE-HEALTHCAREâ™£â™£â™£â™£â™£\n";
 	for (int i = 0; i < vec_dept.size(); i++) {
-		cout << vec_dept[i] << endl;
+		Console::gotoxy(46, (i * 2) + 4);
+		cout << "("<<i+1<<")"<<vec_dept[i] << endl;
 	}
 }
 
-/*======Console Å¬·¡½º ±¸ÇöºÎ======*/
-int Console::select_menu() {//¸Ş´º ¼±ÅÃ
+/*======Console í´ë˜ìŠ¤ êµ¬í˜„ë¶€======*/
+int Console::select_menu() {//ë©”ë‰´ ì„ íƒ
 	int inputMenu = 0;
 	try {
 		Console::gotoxy(32, 6);  cout << "=====Please select the service you want!=====" << endl;
@@ -340,97 +410,110 @@ int Console::select_menu() {//¸Ş´º ¼±ÅÃ
 		Console::gotoxy(46, 10);  cout << "(2)Cancel" << endl;
 		Console::gotoxy(46, 12);  cout << "(3)Check" << endl;
 		Console::gotoxy(46, 14);  cout << "(4)Exit System" << endl;
-		inputMenu = _getch();//getch()-->¹öÆÛÀúÀåX Å°¸¦ ´©¸§°ú µ¿½Ã¿¡ °ª ÀÔ·Â(¹İÈ¯°ª:ASCIIÄÚµå°ª)
-		system("cls");//ÀÔ·Â ÈÄ ÀÔ·Â¹ŞÀº È­¸é Áö¿ò -->APIÀû¿ë
+		Console::gotoxy(32, 16);  cout << "=============================================" << endl;
+		
+		inputMenu = _getch();//getch()-->ë²„í¼ì €ì¥X í‚¤ë¥¼ ëˆ„ë¦„ê³¼ ë™ì‹œì— ê°’ ì…ë ¥(ë°˜í™˜ê°’:ASCIIì½”ë“œê°’)
+		system("cls");//ì…ë ¥ í›„ ì…ë ¥ë°›ì€ í™”ë©´ ì§€ì›€ -->APIì ìš©
 
 		if (inputMenu > 53) {
 			throw inputMenu;
 		}
 	}
 	catch (int x) {
-		cout << "WARNING! Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù!! ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä~!\n";
+		cout << "WARNING! ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤!! ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”~!\n";
 		cin >> inputMenu;
 	}
 	return inputMenu;
 }
 
-int Console::select_dept() {//ºÎ¼­ ¼±ÅÃ
+int Console::select_dept() {//ë¶€ì„œ ì„ íƒ
 	int inputDept = 0;
 	try {
-		Console::gotoxy(34, 23); cout << "¡Ø Please select the Medical Department you want~!\n";
+		Console::gotoxy(34, 23); cout << "â€» Please select the Medical Department you want~!\n";
 		Console::gotoxy(34, 24); cout << ">>";
 		cin >> inputDept;
-		system("cls");//ÀÔ·Â ÈÄ ÀÔ·Â¹ŞÀº È­¸é Áö¿ò -->APIÀû¿ë
-		cin.ignore(INT_MAX, '\n');//¹öÆÛºñ¿ì±â
+		system("cls");//ì…ë ¥ í›„ ì…ë ¥ë°›ì€ í™”ë©´ ì§€ì›€ -->APIì ìš©
+		cin.ignore(INT_MAX, '\n');//ë²„í¼ë¹„ìš°ê¸°
 
 		if (inputDept > 9) {
 			throw inputDept;
 		}
 	}
 	catch (int x) {
-		cout << "WARNING! Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù!! ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä~!\n";
+		cout << "WARNING! ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤!! ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”~!\n";
 		cin >> inputDept;
 	}
 	return inputDept;
 }
 
-int Console::select_method() {//ºÎ¼­ ¼±ÅÃ
+int Console::select_method() {//ë¶€ì„œ ì„ íƒ
 	int inputDept = 0;
 	try {
-		Console::gotoxy(34, 10); cout << "¡İ¡İ Please select a booking method~! ¡İ¡İ\n";
-		Console::gotoxy(46, 13); cout << "(1)ÀÇ»ç ¼±ÅÃ\n";
-		Console::gotoxy(46, 15); cout << "(2)½ºÄÉÁÙ ¼±ÅÃ\n";
+		Console::gotoxy(34, 10); cout << "â—â— Please select a booking method~! â—â—\n";
+		Console::gotoxy(46, 13); cout << "(1)ì˜ì‚¬ ì„ íƒ\n";
+		Console::gotoxy(46, 15); cout << "(2)ìŠ¤ì¼€ì¤„ ì„ íƒ\n";
 		Console::gotoxy(46, 18); cout << ">>";
 		cin >> inputDept;
-		system("cls");//ÀÔ·Â ÈÄ ÀÔ·Â¹ŞÀº È­¸é Áö¿ò -->APIÀû¿ë
-		cin.ignore(INT_MAX, '\n');//¹öÆÛºñ¿ì±â
+		system("cls");//ì…ë ¥ í›„ ì…ë ¥ë°›ì€ í™”ë©´ ì§€ì›€ -->APIì ìš©
+		cin.ignore(INT_MAX, '\n');//ë²„í¼ë¹„ìš°ê¸°
 
 		if (inputDept > 2) {
 			throw inputDept;
 		}
 	}
 	catch (int x) {
-		cout << "WARNING! Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù!! ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä~!\n";
+		cout << "WARNING! ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤!! ë‹¤ì‹œ ì…ë ¥í•´ì£¼ì„¸ìš”~!\n";
 		cin >> inputDept;
 	}
 	return inputDept;
 }
-void Console::gotoxy(int x, int y) {//À©µµ¿ì API»ç¿ë-->ÄÜ¼ÖÈ­¸é ÁÂÇ¥ Á¶ÀÛ
+void Console::gotoxy(int x, int y) {//ìœˆë„ìš° APIì‚¬ìš©-->ì½˜ì†”í™”ë©´ ì¢Œí‘œ ì¡°ì‘
 	COORD pos = { x,y };
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 void Console::execute_prog() {
 	while (1) {
-		int selectMenu = Console::select_menu();//1) ¸Ş´º ÀÔ·Â
+		Console::gotoxy(28, 3);
+		cout << " â™£â™£â™£â™£â™£â™£WELCOME TO SEVERANCE-HEALTHCAREâ™£â™£â™£â™£â™£\n";
+
+		int selectMenu = Console::select_menu();//1) ë©”ë‰´ ì…ë ¥
 		switch (selectMenu) {
-		case 49: {// ¿¹¾à ÁøÇà
-			hp->display_deptList();//º´¿ø ³» ÀüÃ¼ Áø·áºÎ¼­ Ãâ·Â
-			int selectDept = Console::select_dept();// 2) Áø·áºÎ¼­ ¼±ÅÃ
-			int selectMethod = Console::select_method();//3)¿¹¾à¹æ½Ä ¼±ÅÃ
-			if (selectMethod == 1) {// 3-1) ÀÇ»ç ¼±ÅÃ ¹æ½Ä
+		case 49: {// ì˜ˆì•½ ì§„í–‰
+			hp->display_deptList();//ë³‘ì› ë‚´ ì „ì²´ ì§„ë£Œë¶€ì„œ ì¶œë ¥
+			int selectDept = Console::select_dept();// 2) ì§„ë£Œë¶€ì„œ ì„ íƒ
+			int selectMethod = Console::select_method();//3)ì˜ˆì•½ë°©ì‹ ì„ íƒ
+			if (selectMethod == 1) {// 3-1) ì˜ì‚¬ ì„ íƒ ë°©ì‹
 				hp->activation_booking(selectDept);
 			}
-			else if (selectMethod == 2) {// 3-2) ½ºÄÉÁÙ ¼±ÅÃ ¹æ½Ä
-				cout << "ÇöÀç ÀÌ¿ëÇÏ½Ç ¼ö ¾ø´Â ¼­ºñ½ºÀÔ´Ï´Ù." << endl;
+			else if (selectMethod == 2) {// 3-2) ìŠ¤ì¼€ì¤„ ì„ íƒ ë°©ì‹
+				hp->activation_booking2(selectDept);
 			}
 			break;
 		}
-		case 50: {//¿¹¾à Ãë¼Ò
+		case 50: {//ì˜ˆì•½ ì·¨ì†Œ
 			hp->display_deptList();
-			int selectDept = Console::select_dept();// 2) Áø·áºÎ¼­ ¼±ÅÃ
+			int selectDept = Console::select_dept();// 2) ì§„ë£Œë¶€ì„œ ì„ íƒ
 			hp->activation_cancel(selectDept);
 			break;
 		}
-		case 51: {//¿¹¾à Á¶È¸
+		case 51: {//ì˜ˆì•½ ì¡°íšŒ
 			hp->display_deptList();
-			int selectDept = Console::select_dept();// 2) Áø·áºÎ¼­ ¼±ÅÃ
+			int selectDept = Console::select_dept();// 2) ì§„ë£Œë¶€ì„œ ì„ íƒ
 			hp->activation_chk(selectDept);
 			break;
 		}
 		case 52: {
-			exit(100);
+			string chk;
+			Console::gotoxy(33, 13); cout << "ì •ë§ ì¢…ë£Œí•˜ì‹œê² ìŠµë‹ˆê¹Œ~~~?!!" << endl;
+			Console::gotoxy(33, 14); cout << ">>"; cin >> chk;
+			system("cls");//ì…ë ¥ í›„ ì…ë ¥ë°›ì€ í™”ë©´ ì§€ì›€ -->APIì ìš©
+			if (chk.compare("yes") == 0) {
+				exit(100);
+			}
 		}
-
+		default:
+			cout << "ì˜ëª» ì…ë ¥í•˜ì…¨ìŠµë‹ˆë‹¤!!" << endl;
+			break;
 		}
 	}
 }

@@ -1,9 +1,9 @@
-FamilyMedicine=James,Mary,John
-InternalMedicine=Ignacio,Ann
-PlasticSurgery=Jose
-Dentistry=Tim,Andy,Brian,Ford
-OrthopedicSurgery=Serena
-Ophthalmology=Kevin,Drake
-Psychiatry=Eminem,Ariana
-Dermatology=Miachel
-EmergencyService=Soraka
+1. James,Mary,John
+2. Ignacio,Ann
+3. Jose
+4. Tim,Andy,Brian,Ford
+5. Serena
+6. Kevin,Drake
+7. Eminem,Ariana
+8. Michael
+9. Soraka

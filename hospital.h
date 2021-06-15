@@ -10,23 +10,33 @@ using namespace std;
 #ifndef __HOSPITAL__H
 #define __HOPITAL__H
 
-class Doctor {
+class Doctor{
 public:
-	Doctor(){ cout << "a"; }
+	Doctor() {}
+	void setDc(string dcName) { this->dcName = dcName; }
+	string getDc() { return dcName; }
 private:
-
+	string dcName;
 };
 
 class Department {
 public:
-	Department() { cout << "a"; }
+	Department() {}
+	vector<string> tokenizing_dcList(string const& str);
+	string select();
+	string tokenizing_empty(string const& str);
 	void setDept(string deptName) { this->deptName = deptName; }
+	void inItDc(int num);
+	void selectDc();
+	void display_dcList();
 	string getDept() { return deptName; }
 private:
+	Doctor* dc;
+	vector<string>vec_dc;
 	string deptName;
 };
 
-class Hospital {
+class Hospital{
 public:
 	Hospital();
 	string tokenizing_dept(string const& str);

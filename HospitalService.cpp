@@ -9,82 +9,246 @@ using namespace std;
 
 #include "hospital.h"
 
+/*======Doctor 클래스 구현부======*/
+
+/* doctor 생성자 : 의사 이름과 진료 스케줄 2차원 배열 생성
+  기본 값 : 이름="NULL", 스케줄 : 0행-요일 0열-타임 */
+Doctor::Doctor() {
+	dcName = "NULL";
+	schedule[0][0] = "~~~";
+	schedule[0][1] = "월";
+	schedule[0][2] = "화";
+	schedule[0][3] = "수";
+	schedule[0][4] = "목";
+	schedule[0][5] = "금";
+
+	for (int i = 1; i < 6; i++) {
+		schedule[i][0] = to_string(i) + "time";
+		for (int i = 1; i < 6; i++) {
+			for (int j = 1; j < 6; j++) {
+
+				schedule[i][j] = "NULL";
+			}
+		}
+	}
+}
+string Doctor::getSchedule(string s) {
+	string str;
+	int temp = 0;
+	for (int i = 1; i < DAY; i++){
+		for (int j = 1; j < DATE; j++){
+			if (schedule[i][j] == s) {
+				temp = j;
+				if (i == 1)str = "mon";
+				else if (i == 2)str = "tue";
+				else if (i == 3)str = "wed";
+				else if (i == 4)str = "thu";
+				else if (i == 5)str = "fri";
+			}
+		}
+	}
+	str = str + '-' + to_string(temp);
+	return str;
+}
+
+void Doctor::setSchedule(string s, int i, int j) {
+	if (schedule[i][j] == "xxxxxxxxxxxxx") {
+		cout << "휴진입니다~!\n";
+		return;
+	}
+	schedule[i][j] = s;
+	/*try {
+		schedule[i][j] = s;
+		if (schedule[i][j] == "xxxxxxxxxxxxx") {
+			throw 
+		}
+	}
+	catch () {
+
+	}*/
+}
+void Doctor::display_Schedule() {
+	for (int i = 0; i < 6; i++) {
+		for (int j = 0; j < 6; j++) {
+			cout << schedule[i][j] << "\t";
+		}
+		cout << endl;
+	}
+}
+
+void Doctor::cancel_sche(string s) {
+	string str;
+	int temp = 0;
+	for (int i = 1; i < DAY; i++) {
+		for (int j = 1; j < DATE; j++) {
+			if (schedule[i][j] == s) {
+				setSchedule("============", i, j);
+			}
+		}
+	}
+}
 /*======Department 클래스 구현부======*/
 
-void Department::inItDc(int num) {
+void Department::loadDcList(string filename) {
+	string getFile = filename;
+	string str;
 	ifstream read_file;
-	string readLine;
-	string sub;
-	int idx = 0;
+	Doctor* doc;
 
-	read_file.open("doctor.txt");
+	read_file.open(filename);
 	if (!read_file) {
 		cout << "시스템 상에 오류가 있습니다.\n";
 		exit(100);
 	}
-
-	while (!read_file.eof()) {
-		if (read_file.eof()) {
-			break;
+	int count = 0;   //파일 줄세기
+	int i = 0;      //벡터 객체 순서 저장
+	int s = 1; //DAY 계산 
+	while (getline(read_file, str)) {
+		//의사 이름 접근 : 닥터객체 생성하여 벡터 저장 및 의사 이름 저장
+		if (count % 7 == 1) {
+			doctor = new Doctor;
+			doctor->setDc(str);
+			v.push_back(doctor);
+			i++;
 		}
-		getline(read_file, readLine);
-		idx = readLine[0] - '0';
-		sub = tokenizing_empty(readLine);
-		if (idx == num) {
-			vec_dc = tokenizing_dcList(sub);
+		else {
+			//진료 스케줄접근 : 진료 스케줄 받아오기
+			//v 벡터 = 의사객체 저장 -> pop -> temp벡터 -> (storage) string tokenizing --> 각 원소 할당
+			if (str != "-----") {
+				int j = 0;
+				doc = v.at(i - 1);
+				vector<string> sc = tokenizing_sc(str);
+				if (s != DAY) {
+					for (int t = 1; t < DATE; t++) {
+						if (j != sc.size()) {
+							doc->setSchedule(sc.at(j), s, t);
+							j++;
+						}
+					}
+				}
+				if (s == 5)s = 0;
+				s++;
+			}
 		}
+		count++;
 	}
+	read_file.close();
 }
-
-string Department::tokenizing_empty(string const& str) {
-	string result;
-	for (int i = 0; i < str.size(); i++) {
-		if (str[i] == ' ') {
-			result = str.substr(i + 1);
+vector<string> Department::tokenizing_sc(const string str) {
+	vector <string> result;
+	string sc;
+	int chkSpace = 0;
+	int idx = 0;
+	for (int i = 0; i < str.size(); i++) {//읽은 문자열의 길이만큼 루프 수행
+		if (str[i] == ' ') {//공백 문자 만나면 그 이전 문자에 대한 토크나이징 수행 및 해당 데이터 반환
+			sc = str.substr(idx, i - idx);
+			idx = i + 1;
+			result.push_back(sc);
 		}
 	}
+	sc = str.substr(idx);
+	result.push_back(sc);
 	return result;
 }
 
-vector<string>Department:: tokenizing_dcList(string const& str) {
-	vector<string>v;
-	string doctor;
-	int chkComma = 0;
-	int idx = 0;
-	for (int i = 0; i < str.size(); i++){
-		if (str[i] == ',') {
-			doctor = str.substr(idx, i - idx);//쉼표 이전까지 체크
-			idx = i + 1;//인덱스 갱신
-			v.push_back(doctor);//추출된 문자열 벡터에 저장
-		}
-	}
-	doctor = str.substr(idx);//마지막 의사 이름 추출--> 마지막 쉼표 이후 문자열은 루프 밖에서 별도 작업 수행
-	v.push_back(doctor);
-	return v;
-}
-string Department::select() {
-	string input;
+int Department::inputDc() {
+	int input;
     cout << "※ Please select the Doctor you want~!\n";
 	cout << ">>";
 	cin >> input;
 	
 	return input;
 }
-void Department::display_dcList() {
-	for (int i = 0; i < vec_dc.size(); i++){
-		cout << vec_dc[i] << endl;
-	}
+int Department::inputDay() {
+	string input;
+	int result = 0;
+	cout << "※ Please select schedule~!\n";
+	cout << ">>";
+	cin >> input;
+	
+	if (input.compare("mon")==0) { result = 1;}
+	else if (input.compare("tue") == 0) { result = 2;}
+	else if (input.compare("wed") == 0) { result = 3;}
+	else if (input.compare("thu") == 0) { result = 4;}
+	else if (input.compare("fri") == 0) { result = 5;}
+	
+	return result;
 }
-void Department::selectDc() {//point!
-	display_dcList();//출력
-	dc = new Doctor();
-	string doc = select();
-	for (int i = 0; i < vec_dc.size(); i++) {
-		if (doc.compare(vec_dc[i])) {
-			dc->setDc(doc);
+int Department::inputTime() {
+	int inputDept = 0;
+	try {
+		cout << "※ Please select the Medical Department you want~!\n";
+		cout << ">>";
+		cin >> inputDept;
+		cin.ignore(INT_MAX, '\n');//버퍼비우기
+
+		if (inputDept > 5) {
+			throw inputDept;
 		}
 	}
-	cout << "선택한 의사" << dc->getDc();
+	catch (int x) {
+		cout << "WARNING! 잘못된 입력입니다!! 다시 입력해주세요~!\n";
+		cin >> inputDept;
+	}
+	return inputDept;
+}
+string Department::inputInfo() {
+	string inputName;
+	string inputId;
+	string result;
+
+	cout << "※ Please input NAME~!\n";
+	cout << ">>";
+	cin >> inputName;
+
+	cout << "※ Please input ID~!\n";
+	cout << ">>";
+	cin >> inputId;
+
+	result = inputName + '-'+inputId;
+	return result;
+}
+void Department::display_dcList() {
+	for (int i = 0; i < v.size(); i++){
+		cout << v[i]->getDc() << endl;
+	}
+}
+void Department::set_reservation() {//point!
+	display_dcList();//출력
+	int day;
+	int time;
+	string client;
+
+	int inputDoc = inputDc();//의사입력
+	v[inputDoc - 1]->display_Schedule();//의사출력
+
+	day = inputDay();
+	time = inputTime();
+	client = inputInfo();
+
+	v[inputDoc - 1]->setSchedule(client,time,day);//의사출력
+	v[inputDoc - 1]->display_Schedule();//의사출력
+	system("cls");//입력 후 입력받은 화면 지움 -->API적용
+}
+
+void Department::chk_reservation() {
+	string client = inputInfo();
+	string s;
+	for (int i = 0; i < v.size(); i++) {
+		s = v[i]->getSchedule(client);
+		if (s[0] != '-') {
+			cout << s;
+			break;
+		}
+	}
+}
+
+void Department::cancel_reservation() {
+	string client = inputInfo();
+	string s;
+	for (int i = 0; i < v.size(); i++) {
+		v[i]->cancel_sche(client);
+	}
 }
 /*======Hospital 클래스 구현부======*/
 
@@ -97,6 +261,7 @@ Hospital::Hospital() {
 	ifstream read_file;
 	string readLine;
 	string subDept;
+	string subFile;
 	int idx = 0;
 	dept = new Department[9];
 
@@ -111,9 +276,12 @@ Hospital::Hospital() {
 			break;
 		}
 		subDept = tokenizing_dept(readLine);
+		subFile = tokenizing_file(readLine);
+
 		dept[idx].setDept(subDept);
 		vec_dept.push_back(subDept);
 
+		dept[idx].loadDcList(subFile);
 		idx++;
 	}
 	read_file.close();
@@ -123,17 +291,38 @@ Hospital::Hospital() {
 	---> string 헤더파일의 substr라이브러리 활용 */
 string Hospital::tokenizing_dept(string const& str) {
 	string result;
+	int j = 0;
 	for (int i = 0; i < str.size(); i++) {
 		if (str[i] == ' ') {
-			result = str.substr(i + 1);
+			j = i;
+		}
+		if (str[i] == '=') {
+			result = str.substr(j+1, i-3 );
+		}
+	}
+	return result;
+}
+string Hospital::tokenizing_file(string const& str) {
+	string result;
+	int cnt = 0;
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == '=') {
+			cnt++;
+			if (cnt == 1) {
+				result = str.substr(i+1);
+			}
 		}
 	}
 	return result;
 }
 void Hospital::activation_booking(int num) {
-	string s = dept[num - 1].getDept();
-	dept[num - 1].inItDc(num);
-	dept[num - 1].selectDc();
+	dept[num - 1].set_reservation();
+}
+void Hospital::activation_chk(int num) {
+	dept[num - 1].chk_reservation();
+}
+void Hospital::activation_cancel(int num) {
+	dept[num - 1].cancel_reservation();
 }
 /*병원 내 전체 진료부서 출력*/
 void Hospital::display_deptList() {
@@ -141,6 +330,7 @@ void Hospital::display_deptList() {
 		cout << vec_dept[i] << endl;
 	}
 }
+
 /*======Console 클래스 구현부======*/
 int Console::select_menu() {//메뉴 선택
 	int inputMenu = 0;
@@ -210,7 +400,7 @@ void Console::gotoxy(int x, int y) {//윈도우 API사용-->콘솔화면 좌표 조작
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 void Console::execute_prog() {
-	//while (1) {
+	while (1) {
 		int selectMenu = Console::select_menu();//1) 메뉴 입력
 		switch (selectMenu) {
 		case 49: {// 예약 진행
@@ -225,6 +415,22 @@ void Console::execute_prog() {
 			}
 			break;
 		}
+		case 50: {//예약 취소
+			hp->display_deptList();
+			int selectDept = Console::select_dept();// 2) 진료부서 선택
+			hp->activation_cancel(selectDept);
+			break;
 		}
-	//}
+		case 51: {//예약 조회
+			hp->display_deptList();
+			int selectDept = Console::select_dept();// 2) 진료부서 선택
+			hp->activation_chk(selectDept);
+			break;
+		}
+		case 52: {
+			exit(100);
+		}
+
+		}
+	}
 }

@@ -10,37 +10,54 @@ using namespace std;
 #ifndef __HOSPITAL__H
 #define __HOPITAL__H
 
+#define DAY 6
+#define DATE 6
+
 class Doctor{
 public:
-	Doctor() {}
+	Doctor();
 	void setDc(string dcName) { this->dcName = dcName; }
+	void setSchedule(string s, int i, int j);
+	string getSchedule(string s);
 	string getDc() { return dcName; }
+	void cancel_sche(string s);
+	void display_Schedule();
 private:
 	string dcName;
+	string schedule[6][6];
 };
 
 class Department {
 public:
 	Department() {}
-	vector<string> tokenizing_dcList(string const& str);
-	string select();
-	string tokenizing_empty(string const& str);
+	~Department() { delete doctor; }
+	void loadDcList(string filename);
+	vector<string> tokenizing_sc(const string str);
 	void setDept(string deptName) { this->deptName = deptName; }
-	void inItDc(int num);
-	void selectDc();
-	void display_dcList();
 	string getDept() { return deptName; }
+	void set_reservation();
+	void chk_reservation();
+	void cancel_reservation();
+	int inputDc();
+	int inputDay();
+	int inputTime();
+	string inputInfo();
+	void display_dcList();
 private:
-	Doctor* dc;
-	vector<string>vec_dc;
+	vector<Doctor*>v;
+	Doctor* doctor;
 	string deptName;
 };
 
 class Hospital{
 public:
 	Hospital();
+	~Hospital() { delete[]dept; }
 	string tokenizing_dept(string const& str);
+	string tokenizing_file(string const& str);
 	void activation_booking(int num);
+	void activation_chk(int num);
+	void activation_cancel(int num);
 	void display_deptList();
 private:
 	Department* dept;
@@ -50,6 +67,7 @@ private:
 class Console {
 public:
 	Console() { hp = new Hospital(); }
+	~Console() { delete hp; }
 	void execute_prog();//시스템 실행
 	static int select_menu();//메뉴 선택
 	static int select_dept();//진료부서 선택

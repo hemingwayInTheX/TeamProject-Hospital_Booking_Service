@@ -1,4 +1,3 @@
-#include <Windows.h>
 #include <conio.h>
 #include <iostream>
 #include <string>
@@ -8,7 +7,7 @@
 using namespace std;
 
 #ifndef __HOSPITAL__H
-#define __HOPITAL__H
+#define __HOSPITAL__H
 
 #define DAY 6
 #define DATE 6

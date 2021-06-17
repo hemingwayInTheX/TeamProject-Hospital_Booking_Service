@@ -16,11 +16,11 @@ using namespace std;
 Doctor::Doctor() {
 	dcName = "NULL";
 	schedule[0][0] = "~~~";
-	schedule[0][1] = "월";
-	schedule[0][2] = "화";
-	schedule[0][3] = "수";
-	schedule[0][4] = "목";
-	schedule[0][5] = "금";
+	schedule[0][1] = "월\t";
+	schedule[0][2] = "화\t";
+	schedule[0][3] = "수\t";
+	schedule[0][4] = "목\t";
+	schedule[0][5] = "금\t";
 
 	for (int i = 1; i < 6; i++) {
 		schedule[i][0] = to_string(i) + "time";
@@ -53,9 +53,8 @@ string Doctor::getSchedule(string s) {
 /*진료 스케줄 초기화 --> 휴진 'x'reading 시 예외처리*/
 void Doctor::setSchedule(string s, int i, int j) {
 	if (schedule[i][j] == "xxxxxxxxxxxxx") {
-		cout << "휴진입니다~!\n";
-		return;
-	}
+		cout<< "휴진입니다~!\n";
+	} 
 	schedule[i][j] = s;
 }
 /*스케줄 출력*/
@@ -164,7 +163,7 @@ vector<string> Department::tokenizing_sc(const string str) {
 
 int Department::inputDc() {
 	int input;
-	Console::gotoxy(34, 18); cout << "※ Please select the Doctor you want~!\n";
+	Console::gotoxy(28, 18); cout << "※ Please select the Doctor you want~! (input doctor's serial num)\n";
 	Console::gotoxy(34, 19); cout << ">>";
 	cin >> input;
 	system("cls");//입력 후 입력받은 화면 지움 -->API적용
@@ -227,7 +226,7 @@ int Department::reinputDc(int num) {
 	while (1) {
 		input = inputDc();
 		if (!v[input - 1]->search_Schedule(num))
-			cout << "고유번호에 해당하는 의사가 존재하지 않습니다. 다시 입력해주세요" << endl;
+			cout << "★고유번호에 해당하는 의사가 존재하지 않습니다. 다시 입력해주세요" << endl;
 		else
 			break;
 	}
@@ -250,7 +249,11 @@ void Department::set_reservation() {
 	string client;
 
 	int inputDoc = inputDc();// 1) 의사입력
-	v[inputDoc - 1]->display_Schedule();//의사출력
+	Console::gotoxy(37, 13); cout <<"※"<< v[inputDoc - 1]->getDc() << "를 선택하셨습니다!!" << endl;
+	Sleep(3000);//잠깐 멈추고 다음 화면으로 전환
+	system("cls");//입력 후 입력받은 화면 지움 -->API적용
+
+	v[inputDoc - 1]->display_Schedule();//의사 스케줄출력
 
 	day = inputDay();// 2) 날짜 입력 --> Ex) input >> mon, tue, wed
 	time = inputTime();// 3) 시간 입력 
@@ -260,9 +263,11 @@ void Department::set_reservation() {
 	v[inputDoc - 1]->display_Schedule();//선택한 의사 스케줄 및 확정된 예약 내역출력
 	Console::gotoxy(35, 24);
 	cout << v[inputDoc - 1]->getSchedule(client) << "(요일/시간대)를 선택하셨습니다!\n";
+	
 	Sleep(6000);//잠깐 멈추고 다음 화면으로 전환
 	system("cls");//입력 후 입력받은 화면 지움 -->API적용
 }
+
 void Department::set_reservation_sc() {
 	cout << "※ Please select day~!\n";
 	cout << " mon\ttue\twed\tthu\tfri\n";
@@ -299,11 +304,16 @@ void Department::chk_reservation() {
 	for (int i = 0; i < v.size(); i++) {
 		s = v[i]->getSchedule(client);
 		if (s[0] != '-') {
-			cout << s;
+			cout << "☞의사명 = "<<v[i]->getDc()<<"☞진료시간 = "<<s<<"\n";
 			Sleep(6000);//잠깐 멈추고 다음 화면으로 전환
 			system("cls");//입력 후 입력받은 화면 지움 -->API적용
 			break;
 		}
+	}
+	if (s[0] == '-') {
+		cout<<"★해당 예약자 정보가 없습니다~~!"<<endl;
+		Sleep(6000);//잠깐 멈추고 다음 화면으로 전환
+		system("cls");//입력 후 입력받은 화면 지움 -->API적용
 	}
 }
 
@@ -391,7 +401,10 @@ void Hospital::activation_booking2(int num) {
 	dept[num - 1].set_reservation_sc();
 }
 void Hospital::activation_chk(int num) {dept[num - 1].chk_reservation();}
-void Hospital::activation_cancel(int num) {dept[num - 1].cancel_reservation();}
+void Hospital::activation_cancel(int num) {
+	dept[num - 1].cancel_reservation();
+	cout << "※취소 정보를 다시 확인합니다." << endl;
+}
 /*병원 내 전체 진료부서 출력*/
 void Hospital::display_deptList() {
 	Console::gotoxy(34,2); cout << " ♣♣♣♣♣♣SEVERANCE-HEALTHCARE♣♣♣♣♣\n";
@@ -410,18 +423,20 @@ int Console::select_menu() {//메뉴 선택
 		Console::gotoxy(46, 10);  cout << "(2)Cancel" << endl;
 		Console::gotoxy(46, 12);  cout << "(3)Check" << endl;
 		Console::gotoxy(46, 14);  cout << "(4)Exit System" << endl;
-		Console::gotoxy(32, 16);  cout << "=============================================" << endl;
-		
+		Console::gotoxy(32, 16);  cout << "==============================================" << endl;
+		Console::gotoxy(27, 18); cout << "▶Select a Medical Department and select an appointment method.\n";
+		Console::gotoxy(27, 19); cout << "▶Check the doctor's schedule information.\n";
+		Console::gotoxy(27, 20); cout << "▶Enter the date and time you want and enter your information.\n";
 		inputMenu = _getch();//getch()-->버퍼저장X 키를 누름과 동시에 값 입력(반환값:ASCII코드값)
 		system("cls");//입력 후 입력받은 화면 지움 -->API적용
-
-		if (inputMenu > 53) {
+		if (inputMenu > 52) {
 			throw inputMenu;
 		}
 	}
 	catch (int x) {
 		cout << "WARNING! 잘못된 입력입니다!! 다시 입력해주세요~!\n";
-		cin >> inputMenu;
+		inputMenu = _getch();//getch()-->버퍼저장X 키를 누름과 동시에 값 입력(반환값:ASCII코드값)
+		system("cls");//입력 후 입력받은 화면 지움 -->API적용
 	}
 	return inputMenu;
 }
@@ -442,11 +457,12 @@ int Console::select_dept() {//부서 선택
 	catch (int x) {
 		cout << "WARNING! 잘못된 입력입니다!! 다시 입력해주세요~!\n";
 		cin >> inputDept;
+		system("cls");//입력 후 입력받은 화면 지움 -->API적용
 	}
 	return inputDept;
 }
 
-int Console::select_method() {//부서 선택
+int Console::select_method() {//예약방식 선택
 	int inputDept = 0;
 	try {
 		Console::gotoxy(34, 10); cout << "◎◎ Please select a booking method~! ◎◎\n";
@@ -464,6 +480,7 @@ int Console::select_method() {//부서 선택
 	catch (int x) {
 		cout << "WARNING! 잘못된 입력입니다!! 다시 입력해주세요~!\n";
 		cin >> inputDept;
+		system("cls");//입력 후 입력받은 화면 지움 -->API적용
 	}
 	return inputDept;
 }
@@ -494,6 +511,7 @@ void Console::execute_prog() {
 			hp->display_deptList();
 			int selectDept = Console::select_dept();// 2) 진료부서 선택
 			hp->activation_cancel(selectDept);
+			hp->activation_chk(selectDept);
 			break;
 		}
 		case 51: {//예약 조회
@@ -511,9 +529,7 @@ void Console::execute_prog() {
 				exit(100);
 			}
 		}
-		default:
-			cout << "잘못 입력하셨습니다!!" << endl;
-			break;
+		
 		}
 	}
 }
